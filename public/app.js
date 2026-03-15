@@ -6,8 +6,10 @@ let isConnected = false;
 const config = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' }
-  ]
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' }
+  ],
+  iceCandidatePoolSize: 10
 };
 
 const localVideo = document.getElementById('localVideo');
@@ -33,20 +35,34 @@ socket.on('waiting', () => {
 });
 
 socket.on('peer-found', async ({ roomId, initiator }) => {
+  console.log('Peer found, initiator:', initiator);
   updateStatus('Stranger found! Connecting...');
   await createPeerConnection(initiator);
 });
 
 socket.on('signal', async (data) => {
-  if (data.type === 'offer') {
-    await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
-    socket.emit('signal', answer);
-  } else if (data.type === 'answer') {
-    await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
-  } else if (data.candidate) {
-    await peerConnection.addIceCandidate(new RTCIceCandidate(data));
+  try {
+    if (!peerConnection) {
+      console.error('No peer connection');
+      return;
+    }
+
+    if (data.type === 'offer') {
+      console.log('Received offer');
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+      socket.emit('signal', answer);
+      console.log('Sent answer');
+    } else if (data.type === 'answer') {
+      console.log('Received answer');
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+    } else if (data.candidate) {
+      console.log('Received ICE candidate');
+      await peerConnection.addIceCandidate(new RTCIceCandidate(data));
+    }
+  } catch (err) {
+    console.error('Signal error:', err);
   }
 });
 
@@ -69,10 +85,15 @@ socket.on('skipped', () => {
 async function start() {
   try {
     localStream = await navigator.mediaDevices.getUserMedia({ 
-      video: true, 
-      audio: true 
+      video: { width: { ideal: 1280 }, height: { ideal: 720 } }, 
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      }
     });
     localVideo.srcObject = localStream;
+    console.log('Local stream started');
     
     startBtn.disabled = true;
     skipBtn.disabled = false;
@@ -82,19 +103,25 @@ async function start() {
     socket.emit('find-peer');
   } catch (err) {
     updateStatus('Error: Cannot access camera/microphone');
-    console.error(err);
+    console.error('Media error:', err);
   }
 }
 
 async function createPeerConnection(initiator) {
   peerConnection = new RTCPeerConnection(config);
+  console.log('Peer connection created');
   
   localStream.getTracks().forEach(track => {
     peerConnection.addTrack(track, localStream);
+    console.log('Added track:', track.kind);
   });
   
   peerConnection.ontrack = (event) => {
-    remoteVideo.srcObject = event.streams[0];
+    console.log('Received remote track:', event.track.kind);
+    if (remoteVideo.srcObject !== event.streams[0]) {
+      remoteVideo.srcObject = event.streams[0];
+      console.log('Remote stream set');
+    }
     updateStatus('Connected! Say hi 👋');
     isConnected = true;
     messageInput.disabled = false;
@@ -103,21 +130,38 @@ async function createPeerConnection(initiator) {
   
   peerConnection.onicecandidate = (event) => {
     if (event.candidate) {
+      console.log('Sending ICE candidate');
       socket.emit('signal', { candidate: event.candidate });
     }
   };
   
+  peerConnection.oniceconnectionstatechange = () => {
+    console.log('ICE connection state:', peerConnection.iceConnectionState);
+    if (peerConnection.iceConnectionState === 'disconnected' || 
+        peerConnection.iceConnectionState === 'failed') {
+      updateStatus('Connection lost');
+      cleanup();
+    }
+  };
+  
   peerConnection.onconnectionstatechange = () => {
-    if (peerConnection.connectionState === 'disconnected') {
+    console.log('Connection state:', peerConnection.connectionState);
+    if (peerConnection.connectionState === 'disconnected' || 
+        peerConnection.connectionState === 'failed') {
       updateStatus('Connection lost');
       cleanup();
     }
   };
   
   if (initiator) {
-    const offer = await peerConnection.createOffer();
+    console.log('Creating offer');
+    const offer = await peerConnection.createOffer({
+      offerToReceiveAudio: true,
+      offerToReceiveVideo: true
+    });
     await peerConnection.setLocalDescription(offer);
     socket.emit('signal', offer);
+    console.log('Offer sent');
   }
 }
 

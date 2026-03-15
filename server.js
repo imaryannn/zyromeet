@@ -1,7 +1,12 @@
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const io = require('socket.io')(http, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
 
 app.use(express.static('public'));
 
@@ -22,18 +27,22 @@ io.on('connection', (socket) => {
       rooms.set(socket.id, { roomId, peer });
       rooms.set(peer, { roomId, peer: socket.id });
       
+      console.log(`Matched ${socket.id} with ${peer}`);
+      
       io.to(peer).emit('peer-found', { roomId, initiator: false });
       socket.emit('peer-found', { roomId, initiator: true });
     } else {
       waitingUsers.push(socket.id);
       socket.emit('waiting');
+      console.log(`${socket.id} is waiting`);
     }
   });
 
   socket.on('signal', (data) => {
     const room = rooms.get(socket.id);
     if (room) {
-      socket.to(room.peer).emit('signal', data);
+      console.log(`Signal from ${socket.id} to ${room.peer}:`, data.type || 'candidate');
+      io.to(room.peer).emit('signal', data);
     }
   });
 
@@ -57,9 +66,10 @@ io.on('connection', (socket) => {
   function handleDisconnect(socket) {
     const room = rooms.get(socket.id);
     if (room) {
-      socket.to(room.peer).emit('peer-disconnected');
+      io.to(room.peer).emit('peer-disconnected');
       rooms.delete(room.peer);
       rooms.delete(socket.id);
+      console.log(`Disconnected ${socket.id} from ${room.peer}`);
     }
     waitingUsers = waitingUsers.filter(id => id !== socket.id);
   }
