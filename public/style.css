@@ -55,7 +55,7 @@ header p {
   background: #3E2723;
   border-radius: 10px;
   overflow: hidden;
-  aspect-ratio: 4/3;
+  aspect-ratio: 1/1;
 }
 
 .video-container video {
@@ -283,8 +283,8 @@ button:disabled {
   .video-section {
     position: relative;
     display: block;
-    flex: 1;
-    min-height: 50vh;
+    flex: 0 0 auto;
+    min-height: unset;
     background: #3E2723;
   }
   
@@ -294,12 +294,12 @@ button:disabled {
   
   .video-container:first-child {
     width: 100%;
-    height: 100%;
-    aspect-ratio: unset;
+    height: auto;
+    aspect-ratio: 1/1;
   }
   
   .video-container:first-child video {
-    object-fit: contain;
+    object-fit: cover;
   }
   
   .video-container:last-child {
@@ -307,8 +307,8 @@ button:disabled {
     top: 15px;
     right: 15px;
     width: 100px;
-    height: 140px;
-    aspect-ratio: unset;
+    height: 100px;
+    aspect-ratio: 1/1;
     border: 2px solid #F5E6D3;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     z-index: 10;
@@ -398,7 +398,7 @@ button:disabled {
   
   .video-container:last-child {
     width: 90px;
-    height: 120px;
+    height: 90px;
     top: 12px;
     right: 12px;
   }
