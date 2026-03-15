@@ -12,9 +12,17 @@ app.use(express.static('public'));
 
 let waitingUsers = [];
 const rooms = new Map();
+let onlineUsers = 0;
+
+function broadcastOnlineCount() {
+  io.emit('online-count', onlineUsers);
+  console.log('Online users:', onlineUsers);
+}
 
 io.on('connection', (socket) => {
+  onlineUsers++;
   console.log('User connected:', socket.id);
+  broadcastOnlineCount();
 
   socket.on('find-peer', () => {
     if (waitingUsers.length > 0) {
@@ -59,7 +67,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
+    onlineUsers--;
     handleDisconnect(socket);
+    broadcastOnlineCount();
     console.log('User disconnected:', socket.id);
   });
 

@@ -89,6 +89,10 @@ socket.on('skipped', () => {
   socket.emit('find-peer');
 });
 
+socket.on('online-count', (count) => {
+  updateOnlineCount(count);
+});
+
 async function start() {
   try {
     localStream = await navigator.mediaDevices.getUserMedia({ 
@@ -227,6 +231,13 @@ function cleanup() {
 
 function updateStatus(message) {
   status.textContent = message;
+}
+
+function updateOnlineCount(count) {
+  const onlineCounter = document.getElementById('onlineCounter');
+  if (onlineCounter) {
+    onlineCounter.textContent = count;
+  }
 }
 
 updateStatus('Click Start to begin');
