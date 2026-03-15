@@ -264,11 +264,29 @@ button:disabled {
   }
   
   .video-section {
-    gap: 10px;
+    position: relative;
+    display: block;
+    gap: 0;
   }
   
   .video-container {
     aspect-ratio: 16/9;
+  }
+  
+  .video-container:first-child {
+    width: 100%;
+  }
+  
+  .video-container:last-child {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 120px;
+    height: auto;
+    aspect-ratio: 3/4;
+    border: 3px solid #F5E6D3;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    z-index: 10;
   }
   
   .video-label {
@@ -276,6 +294,13 @@ button:disabled {
     padding: 4px 10px;
     bottom: 8px;
     left: 8px;
+  }
+  
+  .video-container:last-child .video-label {
+    font-size: 0.7em;
+    padding: 3px 8px;
+    bottom: 5px;
+    left: 5px;
   }
   
   .chat-section {
@@ -355,7 +380,14 @@ button:disabled {
   }
   
   .video-section {
-    gap: 8px;
+    gap: 0;
+  }
+  
+  .video-container:last-child {
+    width: 100px;
+    bottom: 8px;
+    right: 8px;
+    border-width: 2px;
   }
   
   .chat-box {
