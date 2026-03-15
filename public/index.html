@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZyroMeet - Random Video Chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ZyroMeet</h1>
+      <p>Connect with random strangers</p>
+    </header>
+
+    <div class="main-content">
+      <div class="video-section">
+        <div class="video-container">
+          <video id="remoteVideo" autoplay playsinline></video>
+          <div class="video-label">Stranger</div>
+        </div>
+        <div class="video-container">
+          <video id="localVideo" autoplay muted playsinline></video>
+          <div class="video-label">You</div>
+        </div>
+      </div>
+
+      <div class="chat-section">
+        <div id="chatBox" class="chat-box"></div>
+        <div class="chat-input-container">
+          <input type="text" id="messageInput" placeholder="Type a message..." disabled>
+          <button id="sendBtn" disabled>Send</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="startBtn" class="btn-primary">Start</button>
+      <button id="skipBtn" class="btn-secondary" disabled>Skip</button>
+      <button id="stopBtn" class="btn-danger" disabled>Stop</button>
+    </div>
+
+    <div id="status" class="status"></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
