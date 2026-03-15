@@ -58,10 +58,14 @@ socket.on('signal', async (data) => {
       console.log('Received answer');
       await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
     } else if (data.candidate) {
-      console.log('Received ICE candidate');
-      // Validate ICE candidate before adding
-      if (data.candidate.candidate && data.candidate.candidate.length > 0) {
+      console.log('Received ICE candidate:', data.candidate);
+      // Only add valid ICE candidates (skip null/empty ones)
+      if (data.candidate.candidate && 
+          (data.candidate.sdpMid !== null || data.candidate.sdpMLineIndex !== null)) {
         await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+        console.log('ICE candidate added');
+      } else {
+        console.log('Skipped invalid ICE candidate');
       }
     }
   } catch (err) {
@@ -135,6 +139,8 @@ async function createPeerConnection(initiator) {
     if (event.candidate) {
       console.log('Sending ICE candidate');
       socket.emit('signal', { candidate: event.candidate });
+    } else {
+      console.log('ICE gathering complete');
     }
   };
   
