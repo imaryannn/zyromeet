@@ -59,7 +59,10 @@ socket.on('signal', async (data) => {
       await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
     } else if (data.candidate) {
       console.log('Received ICE candidate');
-      await peerConnection.addIceCandidate(new RTCIceCandidate(data));
+      // Validate ICE candidate before adding
+      if (data.candidate.candidate && data.candidate.candidate.length > 0) {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+      }
     }
   } catch (err) {
     console.error('Signal error:', err);
