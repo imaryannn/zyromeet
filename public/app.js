@@ -2,6 +2,12 @@ const socket = io();
 let localStream;
 let peerConnection;
 let isConnected = false;
+let nsfwModel;
+let moderationInterval;
+let violationCount = 0;
+const MAX_VIOLATIONS = 2;
+const NSFW_THRESHOLD = 0.6; // 60% confidence
+const SCAN_INTERVAL = 15000; // 15 seconds
 
 const config = {
   iceServers: [
@@ -38,6 +44,7 @@ socket.on('peer-found', async ({ roomId, initiator }) => {
   console.log('Peer found, initiator:', initiator);
   updateStatus('Stranger found! Connecting...');
   await createPeerConnection(initiator);
+  startModeration();
 });
 
 socket.on('signal', async (data) => {
@@ -80,13 +87,25 @@ socket.on('chat-message', (message) => {
 socket.on('peer-disconnected', () => {
   updateStatus('Stranger disconnected');
   addMessage('Stranger has disconnected', 'system');
+  stopModeration();
   cleanup();
 });
 
 socket.on('skipped', () => {
   updateStatus('Looking for someone...');
+  stopModeration();
   cleanup();
   socket.emit('find-peer');
+});
+
+socket.on('moderation-warning', () => {
+  addMessage('⚠️ Warning: Inappropriate content detected from stranger', 'system');
+});
+
+socket.on('moderation-disconnect', () => {
+  addMessage('🚫 Connection terminated: Inappropriate content detected', 'system');
+  stopModeration();
+  cleanup();
 });
 
 socket.on('online-count', (count) => {
@@ -111,10 +130,31 @@ async function start() {
     stopBtn.disabled = false;
     
     updateStatus('Looking for someone...');
+    
+    // Load NSFW model in background (non-blocking)
+    if (!nsfwModel) {
+      loadNSFWModel();
+    }
+    
     socket.emit('find-peer');
   } catch (err) {
     updateStatus('Error: Cannot access camera/microphone');
     console.error('Media error:', err);
+  }
+}
+
+async function loadNSFWModel() {
+  try {
+    console.log('Loading NSFW model...');
+    // Try loading from alternative CDN with explicit model path
+    nsfwModel = await nsfwjs.load('https://nsfwjs.com/model/', {
+      type: 'graph'
+    });
+    console.log('NSFW model loaded successfully');
+  } catch (err) {
+    console.error('Failed to load NSFW model:', err);
+    console.log('Continuing without content moderation');
+    // Continue without moderation rather than blocking the app
   }
 }
 
@@ -201,6 +241,7 @@ function skip() {
 }
 
 function stop() {
+  stopModeration();
   cleanup();
   if (localStream) {
     localStream.getTracks().forEach(track => track.stop());
@@ -216,9 +257,11 @@ function stop() {
   
   updateStatus('Click Start to begin');
   chatBox.innerHTML = '';
+  violationCount = 0;
 }
 
 function cleanup() {
+  stopModeration();
   if (peerConnection) {
     peerConnection.close();
     peerConnection = null;
@@ -227,6 +270,7 @@ function cleanup() {
   isConnected = false;
   messageInput.disabled = true;
   sendBtn.disabled = true;
+  violationCount = 0;
 }
 
 function updateStatus(message) {
@@ -237,6 +281,62 @@ function updateOnlineCount(count) {
   const onlineCounter = document.getElementById('onlineCounter');
   if (onlineCounter) {
     onlineCounter.textContent = count;
+  }
+}
+
+function startModeration() {
+  if (!nsfwModel) return;
+  
+  violationCount = 0;
+  console.log('Starting content moderation...');
+  
+  moderationInterval = setInterval(async () => {
+    await checkContent();
+  }, SCAN_INTERVAL);
+}
+
+function stopModeration() {
+  if (moderationInterval) {
+    clearInterval(moderationInterval);
+    moderationInterval = null;
+    console.log('Stopped content moderation');
+  }
+}
+
+async function checkContent() {
+  if (!nsfwModel || !isConnected) return;
+  
+  try {
+    // Check remote video (stranger's video)
+    if (remoteVideo.readyState === remoteVideo.HAVE_ENOUGH_DATA) {
+      const predictions = await nsfwModel.classify(remoteVideo);
+      console.log('NSFW predictions:', predictions);
+      
+      // Check for inappropriate content
+      const pornScore = predictions.find(p => p.className === 'Porn')?.probability || 0;
+      const hentaiScore = predictions.find(p => p.className === 'Hentai')?.probability || 0;
+      const sexyScore = predictions.find(p => p.className === 'Sexy')?.probability || 0;
+      
+      const maxScore = Math.max(pornScore, hentaiScore, sexyScore);
+      
+      if (maxScore > NSFW_THRESHOLD) {
+        violationCount++;
+        console.log(`Violation detected! Count: ${violationCount}, Score: ${maxScore.toFixed(2)}`);
+        
+        if (violationCount >= MAX_VIOLATIONS) {
+          addMessage('🚫 Inappropriate content detected. Disconnecting...', 'system');
+          socket.emit('report-violation');
+          setTimeout(() => {
+            skip();
+          }, 1000);
+        } else {
+          addMessage('⚠️ Warning: Please keep content appropriate', 'system');
+          socket.emit('send-warning');
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Moderation error:', err);
   }
 }
 

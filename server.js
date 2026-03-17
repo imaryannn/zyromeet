@@ -66,6 +66,23 @@ io.on('connection', (socket) => {
     socket.emit('skipped');
   });
 
+  socket.on('send-warning', () => {
+    const room = rooms.get(socket.id);
+    if (room) {
+      io.to(room.peer).emit('moderation-warning');
+      console.log(`Warning sent from ${socket.id} to ${room.peer}`);
+    }
+  });
+
+  socket.on('report-violation', () => {
+    const room = rooms.get(socket.id);
+    if (room) {
+      io.to(room.peer).emit('moderation-disconnect');
+      console.log(`Violation reported: ${socket.id} reported ${room.peer}`);
+      // Here you can add database logging for violations
+    }
+  });
+
   socket.on('disconnect', () => {
     onlineUsers--;
     handleDisconnect(socket);
