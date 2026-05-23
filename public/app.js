@@ -22,6 +22,7 @@ const config = {
 const localVideo = document.getElementById('localVideo');
 const remoteVideo = document.getElementById('remoteVideo');
 const startBtn = document.getElementById('startBtn');
+const muteBtn = document.getElementById('muteBtn');
 const skipBtn = document.getElementById('skipBtn');
 const stopBtn = document.getElementById('stopBtn');
 const messageInput = document.getElementById('messageInput');
@@ -35,6 +36,7 @@ if (chatMode === 'text') {
 }
 
 startBtn.addEventListener('click', start);
+muteBtn.addEventListener('click', toggleMute);
 skipBtn.addEventListener('click', skip);
 stopBtn.addEventListener('click', stop);
 sendBtn.addEventListener('click', sendMessage);
@@ -130,6 +132,7 @@ socket.on('online-count', (count) => {
 async function start() {
   try {
     startBtn.disabled = true;
+    muteBtn.disabled = true;
     skipBtn.disabled = false;
     stopBtn.disabled = false;
 
@@ -149,6 +152,8 @@ async function start() {
       }
     });
     localVideo.srcObject = localStream;
+    setMicMuted(false);
+    muteBtn.disabled = false;
     console.log('Local stream started');
     
     // Load NSFW model in background (non-blocking)
@@ -270,6 +275,10 @@ function stop() {
   localVideo.srcObject = null;
   
   startBtn.disabled = false;
+  muteBtn.disabled = true;
+  muteBtn.querySelector('span').textContent = 'Mute';
+  muteBtn.setAttribute('aria-label', 'Mute microphone');
+  muteBtn.classList.remove('is-muted');
   skipBtn.disabled = true;
   stopBtn.disabled = true;
   messageInput.disabled = true;
@@ -278,6 +287,23 @@ function stop() {
   updateStatus('Click Start to begin');
   chatBox.innerHTML = '';
   violationCount = 0;
+}
+
+function toggleMute() {
+  if (!localStream) return;
+  const audioTrack = localStream.getAudioTracks()[0];
+  if (!audioTrack) return;
+  setMicMuted(audioTrack.enabled);
+}
+
+function setMicMuted(isMuted) {
+  if (!localStream) return;
+  localStream.getAudioTracks().forEach(track => {
+    track.enabled = !isMuted;
+  });
+  muteBtn.querySelector('span').textContent = isMuted ? 'Unmute' : 'Mute';
+  muteBtn.setAttribute('aria-label', isMuted ? 'Unmute microphone' : 'Mute microphone');
+  muteBtn.classList.toggle('is-muted', isMuted);
 }
 
 function cleanup() {
