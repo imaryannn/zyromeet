@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Connect with random strangers through video chat. Anonymous, instant, and free.">
+  <title>ZyroMeet - Random Video Chat with Strangers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="landing.css">
+</head>
+<body>
+  <nav class="scroll-pill" aria-label="Page sections">
+    <a href="#home" class="scroll-pill-link active">Home</a>
+    <a href="#features" class="scroll-pill-link">Features</a>
+    <a href="#how" class="scroll-pill-link">How</a>
+    <a href="#start" class="scroll-pill-link">Start</a>
+  </nav>
+
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-container">
+      <div class="nav-logo" aria-label="ZyroMeet">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 22V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3.27 6.96L12 12l8.73-5.04" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        ZyroMeet
+      </div>
+      <a href="/app" class="nav-cta" data-app-launch>
+        Launch App
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-content">
+        <div class="hero-badge" role="status" aria-live="polite">
+          <span class="badge-dot" aria-hidden="true"></span>
+          <span id="liveBadge">0</span> online now
+        </div>
+        
+        <h1 class="hero-title">
+          Meet strangers.
+          <span class="title-accent">Instantly.</span>
+        </h1>
+        
+        <p class="hero-subtitle">
+          Anonymous video conversations with people worldwide. No signup, no friction—just human connection.
+        </p>
+        
+        <div class="hero-actions">
+          <a href="/app" class="btn-primary" data-app-launch>
+            Start Chatting
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+          <div class="hero-note">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            Safe & Anonymous
+          </div>
+        </div>
+      </div>
+      
+      <div class="hero-visual" aria-hidden="true">
+        <div class="mockup-container">
+          <div class="video-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <div class="video-label">Stranger</div>
+          </div>
+          <div class="video-card">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <div class="video-label">You</div>
+          </div>
+          <div class="connection-line">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M17 8l4 4-4 4M3 12h18"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="features-grid">
+        <article class="feature fade-in">
+          <div class="feature-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          <h3>Instant Matching</h3>
+          <p>Connect in under 3 seconds. No waiting.</p>
+        </article>
+        
+        <article class="feature fade-in fade-in-delay-1">
+          <div class="feature-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <h3>Private & Secure</h3>
+          <p>End-to-end encrypted. Complete anonymity.</p>
+        </article>
+        
+        <article class="feature fade-in fade-in-delay-2">
+          <div class="feature-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <h3>Global Reach</h3>
+          <p>Meet people from every corner of the world.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="how" id="how">
+      <div class="how-container">
+        <header class="section-header fade-in">
+          <h2>How it works</h2>
+        </header>
+        
+        <ol class="steps">
+          <li class="step fade-in">
+            <div class="step-number" aria-hidden="true">1</div>
+            <div class="step-content">
+              <h3>Allow Access</h3>
+              <p>Grant camera and microphone permissions when prompted.</p>
+            </div>
+          </li>
+          
+          <li class="step fade-in fade-in-delay-1">
+            <div class="step-number" aria-hidden="true">2</div>
+            <div class="step-content">
+              <h3>Get Matched</h3>
+              <p>We instantly pair you with a random stranger.</p>
+            </div>
+          </li>
+          
+          <li class="step fade-in fade-in-delay-2">
+            <div class="step-number" aria-hidden="true">3</div>
+            <div class="step-content">
+              <h3>Start Talking</h3>
+              <p>Chat via video and text. Skip anytime.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="cta" id="start">
+      <div class="cta-container fade-in">
+        <h2>Ready for your next conversation?</h2>
+        <p>Join <span id="activeCount">0</span> people connecting right now</p>
+        <a href="/app" class="btn-primary" data-app-launch>
+          Start Chatting Now
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="modeModal" aria-hidden="true">
+    <div class="choice-modal" role="dialog" aria-modal="true" aria-labelledby="modeTitle">
+      <button class="modal-close" type="button" data-close-modal aria-label="Close dialog">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+      <p class="modal-kicker">Choose your room</p>
+      <h2 id="modeTitle">How do you want to chat?</h2>
+      <div class="mode-options">
+        <button class="mode-option" type="button" data-mode="text">
+          <span class="mode-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
+            </svg>
+          </span>
+          <span>
+            <strong>Text Chat</strong>
+            <small>No camera or mic needed</small>
+          </span>
+        </button>
+        <button class="mode-option" type="button" data-mode="video">
+          <span class="mode-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m22 8-6 4 6 4V8Z"/>
+              <rect x="2" y="6" width="14" height="12" rx="2"/>
+            </svg>
+          </span>
+          <span>
+            <strong>Video Chat</strong>
+            <small>Camera and mic required</small>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="guidelinesModal" aria-hidden="true">
+    <div class="choice-modal" role="dialog" aria-modal="true" aria-labelledby="guidelinesTitle">
+      <button class="modal-close" type="button" data-close-modal aria-label="Close dialog">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+      <p class="modal-kicker">Before you enter</p>
+      <h2 id="guidelinesTitle">Please read the community guidelines</h2>
+      <p class="modal-copy">Respect other people, keep chats appropriate, protect privacy, and report bad behavior.</p>
+      <div class="modal-actions">
+        <a href="/community-guidelines.html" class="modal-link" target="_blank" rel="noopener">Read guidelines</a>
+        <button class="modal-primary" type="button" id="acceptGuidelines">I have read them</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer" role="contentinfo">
+    <div class="footer-container">
+      <p>Made with <svg width="16" height="16" viewBox="0 0 24 24" fill="oklch(0.55 0.18 25)" style="display: inline-block; vertical-align: middle;" aria-label="love"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> in India</p>
+      <p>Please be respectful and follow <a href="/community-guidelines.html">community guidelines</a></p>
+    </div>
+  </footer>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // Socket.io for user count
+    const socket = io();
+    socket.on('userCount', (count) => {
+      const liveEl = document.getElementById('liveBadge');
+      const activeEl = document.getElementById('activeCount');
+      if (liveEl) liveEl.textContent = count;
+      if (activeEl) activeEl.textContent = count;
+    });
+
+    // Floating header
+    const nav = document.querySelector('.nav');
+    const sectionLinks = document.querySelectorAll('.scroll-pill-link');
+    const modeModal = document.getElementById('modeModal');
+    const guidelinesModal = document.getElementById('guidelinesModal');
+    const launchLinks = document.querySelectorAll('[data-app-launch]');
+    const modeButtons = document.querySelectorAll('[data-mode]');
+    const closeButtons = document.querySelectorAll('[data-close-modal]');
+    const acceptGuidelines = document.getElementById('acceptGuidelines');
+    let selectedMode = 'video';
+
+    const openModal = (modal) => {
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    };
+
+    const closeModals = () => {
+      document.querySelectorAll('.modal-backdrop.open').forEach(modal => {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+      });
+      document.body.classList.remove('modal-open');
+    };
+
+    launchLinks.forEach(link => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        openModal(modeModal);
+      });
+    });
+
+    modeButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        selectedMode = button.dataset.mode;
+        closeModals();
+        openModal(guidelinesModal);
+      });
+    });
+
+    closeButtons.forEach(button => {
+      button.addEventListener('click', closeModals);
+    });
+
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.addEventListener('click', (event) => {
+        if (event.target === backdrop) closeModals();
+      });
+    });
+
+    acceptGuidelines.addEventListener('click', () => {
+      window.location.href = `/app?mode=${selectedMode}`;
+    });
+    
+    const updateScrollChrome = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (nav && scrollTop > 50) {
+        nav.classList.add('scrolled');
+      } else if (nav) {
+        nav.classList.remove('scrolled');
+      }
+    };
+
+    updateScrollChrome();
+    window.addEventListener('scroll', updateScrollChrome, { passive: true });
+    window.addEventListener('resize', updateScrollChrome);
+
+    // Intersection Observer for sequential fade-in animations
+    const observerOptions = {
+      threshold: 0.35,
+      rootMargin: '-12% 0px -18%'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('section-active');
+          sectionLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`);
+          });
+          // Get all fade-in elements within this section
+          const fadeElements = entry.target.querySelectorAll('.fade-in');
+          fadeElements.forEach(el => {
+            el.classList.add('visible');
+          });
+        } else {
+          entry.target.classList.remove('section-active');
+        }
+      });
+    }, observerOptions);
+
+    // Observe sections for triggering animations
+    document.querySelectorAll('.hero, .features, .how, .cta').forEach(section => {
+      observer.observe(section);
+    });
+  </script>
+</body>
+</html>

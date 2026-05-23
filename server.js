@@ -8,14 +8,30 @@ const io = require('socket.io')(http, {
   }
 });
 
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/landing.html');
+});
+
+app.get('/app', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
+app.get('/community-guidelines', (req, res) => {
+  res.sendFile(__dirname + '/public/community-guidelines.html');
+});
+
 app.use(express.static('public'));
 
-let waitingUsers = [];
+const waitingUsers = {
+  text: [],
+  video: []
+};
 const rooms = new Map();
 let onlineUsers = 0;
 
 function broadcastOnlineCount() {
   io.emit('online-count', onlineUsers);
+  io.emit('userCount', onlineUsers);
   console.log('Online users:', onlineUsers);
 }
 
@@ -24,25 +40,28 @@ io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
   broadcastOnlineCount();
 
-  socket.on('find-peer', () => {
-    if (waitingUsers.length > 0) {
-      const peer = waitingUsers.shift();
+  socket.on('find-peer', (data = {}) => {
+    const mode = data.mode === 'text' ? 'text' : 'video';
+    const queue = waitingUsers[mode];
+
+    if (queue.length > 0) {
+      const peer = queue.shift();
       const roomId = `${socket.id}-${peer}`;
       
       socket.join(roomId);
       io.sockets.sockets.get(peer)?.join(roomId);
       
-      rooms.set(socket.id, { roomId, peer });
-      rooms.set(peer, { roomId, peer: socket.id });
+      rooms.set(socket.id, { roomId, peer, mode });
+      rooms.set(peer, { roomId, peer: socket.id, mode });
       
-      console.log(`Matched ${socket.id} with ${peer}`);
+      console.log(`Matched ${socket.id} with ${peer} in ${mode} mode`);
       
-      io.to(peer).emit('peer-found', { roomId, initiator: false });
-      socket.emit('peer-found', { roomId, initiator: true });
+      io.to(peer).emit('peer-found', { roomId, initiator: false, mode });
+      socket.emit('peer-found', { roomId, initiator: true, mode });
     } else {
-      waitingUsers.push(socket.id);
+      queue.push(socket.id);
       socket.emit('waiting');
-      console.log(`${socket.id} is waiting`);
+      console.log(`${socket.id} is waiting in ${mode} mode`);
     }
   });
 
@@ -98,7 +117,8 @@ io.on('connection', (socket) => {
       rooms.delete(socket.id);
       console.log(`Disconnected ${socket.id} from ${room.peer}`);
     }
-    waitingUsers = waitingUsers.filter(id => id !== socket.id);
+    waitingUsers.text = waitingUsers.text.filter(id => id !== socket.id);
+    waitingUsers.video = waitingUsers.video.filter(id => id !== socket.id);
   }
 });
 

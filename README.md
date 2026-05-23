@@ -6,11 +6,12 @@ A random video and chat platform built with WebRTC, Socket.io, and Node.js.
 
 ## Features
 
+- **Landing Page**: Professional landing page with live user count
 - Random peer-to-peer video chat
 - Real-time text messaging
 - Skip to next stranger
-- Brown and beige themed UI
-- Responsive design
+- Modern dark UI optimized for video content
+- Responsive design (mobile-first)
 
 ## Installation
 
@@ -24,7 +25,9 @@ npm install
 npm start
 ```
 
-Then open your browser and navigate to `http://localhost:3000`
+Then open your browser and navigate to:
+- Landing page: `http://localhost:3000`
+- App: `http://localhost:3000/app`
 
 ## Technology Stack
 

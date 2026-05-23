@@ -8,6 +8,7 @@ let violationCount = 0;
 const MAX_VIOLATIONS = 2;
 const NSFW_THRESHOLD = 0.6; // 60% confidence
 const SCAN_INTERVAL = 15000; // 15 seconds
+const chatMode = new URLSearchParams(window.location.search).get('mode') === 'text' ? 'text' : 'video';
 
 const config = {
   iceServers: [
@@ -28,6 +29,11 @@ const sendBtn = document.getElementById('sendBtn');
 const chatBox = document.getElementById('chatBox');
 const status = document.getElementById('status');
 
+if (chatMode === 'text') {
+  document.body.classList.add('text-mode');
+  updateStatus('Text chat selected. Click Start to begin');
+}
+
 startBtn.addEventListener('click', start);
 skipBtn.addEventListener('click', skip);
 stopBtn.addEventListener('click', stop);
@@ -40,8 +46,17 @@ socket.on('waiting', () => {
   updateStatus('Looking for someone...');
 });
 
-socket.on('peer-found', async ({ roomId, initiator }) => {
+socket.on('peer-found', async ({ roomId, initiator, mode }) => {
   console.log('Peer found, initiator:', initiator);
+  if (mode === 'text' || chatMode === 'text') {
+    updateStatus('Connected! Say hi');
+    isConnected = true;
+    messageInput.disabled = false;
+    sendBtn.disabled = false;
+    addMessage('You are connected for text chat', 'system');
+    return;
+  }
+
   updateStatus('Stranger found! Connecting...');
   await createPeerConnection(initiator);
   startModeration();
@@ -95,7 +110,7 @@ socket.on('skipped', () => {
   updateStatus('Looking for someone...');
   stopModeration();
   cleanup();
-  socket.emit('find-peer');
+  socket.emit('find-peer', { mode: chatMode });
 });
 
 socket.on('moderation-warning', () => {
@@ -114,6 +129,17 @@ socket.on('online-count', (count) => {
 
 async function start() {
   try {
+    startBtn.disabled = true;
+    skipBtn.disabled = false;
+    stopBtn.disabled = false;
+
+    updateStatus('Looking for someone...');
+
+    if (chatMode === 'text') {
+      socket.emit('find-peer', { mode: 'text' });
+      return;
+    }
+
     localStream = await navigator.mediaDevices.getUserMedia({ 
       video: { width: { ideal: 1280 }, height: { ideal: 720 } }, 
       audio: {
@@ -125,18 +151,12 @@ async function start() {
     localVideo.srcObject = localStream;
     console.log('Local stream started');
     
-    startBtn.disabled = true;
-    skipBtn.disabled = false;
-    stopBtn.disabled = false;
-    
-    updateStatus('Looking for someone...');
-    
     // Load NSFW model in background (non-blocking)
     if (!nsfwModel) {
       loadNSFWModel();
     }
     
-    socket.emit('find-peer');
+    socket.emit('find-peer', { mode: 'video' });
   } catch (err) {
     updateStatus('Error: Cannot access camera/microphone');
     console.error('Media error:', err);
